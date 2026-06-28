@@ -1,0 +1,10 @@
+const router=require('express').Router();
+const {body}=require('express-validator');
+const ctrl=require('../controllers/bloquesController');
+const auth=require('../middleware/auth');
+const validar=require('../middleware/validar');
+const reglas=[body('sala_id').isInt({min:1}).withMessage('sala_id invalido'),body('fecha').isDate().withMessage('Fecha invalida'),body('hora_inicio').isInt({min:0,max:23}).withMessage('hora_inicio 0-23'),body('hora_fin').isInt({min:1,max:24}).withMessage('hora_fin 1-24'),body('tipo').optional().isIn(['evento','bloqueado','mantenimiento']).withMessage('Tipo invalido')];
+router.get('/',ctrl.listar);
+router.post('/',auth,reglas,validar,ctrl.crear);
+router.delete('/:id',auth,ctrl.eliminar);
+module.exports=router;

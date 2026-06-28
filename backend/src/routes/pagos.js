@@ -1,0 +1,13 @@
+﻿const router=require('express').Router();
+const {body}=require('express-validator');
+const ctrl=require('../controllers/pagosController');
+const auth=require('../middleware/auth');
+const validar=require('../middleware/validar');
+const auditoria=require('../middleware/auditoria');
+const reglaCrear=[body('evento_id').isInt({min:1}).withMessage('evento_id invalido'),body('monto').isDecimal().withMessage('Monto invalido'),body('url_comprobante').optional().isURL().withMessage('URL invalida'),body('client_uuid').optional().isUUID().withMessage('client_uuid invalido')];
+const reglaEstado=[body('estado').isIn(['pendiente','verificado','rechazado']).withMessage('Estado invalido'),body('base_updated_at').optional().isISO8601().withMessage('base_updated_at invalido')];
+router.use(auth);
+router.get('/',ctrl.listar);
+router.post('/',reglaCrear,validar,auditoria('pagos'),ctrl.crear);
+router.put('/:id/estado',reglaEstado,validar,auditoria('pagos'),ctrl.actualizarEstado);
+module.exports=router;

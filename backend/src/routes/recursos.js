@@ -1,0 +1,10 @@
+const router = require('express').Router();
+const ctrl = require('../controllers/recursosController');
+const auth = require('../middleware/auth');
+router.get('/', ctrl.listar);
+router.get('/evento/:evento_id', ctrl.listarPorEvento);
+router.post('/asignar', auth, ctrl.asignar);
+router.post('/', auth, ctrl.crear);
+router.put('/:id', auth, ctrl.actualizar);
+router.delete('/:id', auth, ctrl.eliminar);
+module.exports = router;

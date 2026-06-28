@@ -1,0 +1,13 @@
+const router=require('express').Router();
+const {body}=require('express-validator');
+const ctrl=require('../controllers/eventosController');
+const auth=require('../middleware/auth');
+const validar=require('../middleware/validar');
+const auditoria=require('../middleware/auditoria');
+const reglas=[body('nombre').notEmpty().trim().withMessage('Nombre requerido'),body('fecha').isDate().withMessage('Fecha invalida YYYY-MM-DD'),body('hora_inicio').matches(/^\d{2}:\d{2}(:\d{2})?$/).withMessage('hora_inicio invalida'),body('hora_fin').matches(/^\d{2}:\d{2}(:\d{2})?$/).withMessage('hora_fin invalida'),body('tipo').isIn(['gratuito','pagado']).withMessage('tipo: gratuito o pagado'),body('precio').optional().isDecimal().withMessage('Precio invalido'),body('estado').optional().isIn(['activo','completado','proximo']).withMessage('Estado invalido'),body('client_uuid').optional().isUUID().withMessage('client_uuid invalido'),body('base_updated_at').optional().isISO8601().withMessage('base_updated_at invalido')];
+router.get('/',ctrl.listar);
+router.get('/:id',ctrl.obtener);
+router.post('/',auth,reglas,validar,auditoria('eventos'),ctrl.crear);
+router.put('/:id',auth,reglas,validar,auditoria('eventos'),ctrl.actualizar);
+router.delete('/:id',auth,auditoria('eventos'),ctrl.eliminar);
+module.exports=router;

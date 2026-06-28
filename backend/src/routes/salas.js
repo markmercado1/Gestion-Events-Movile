@@ -1,0 +1,11 @@
+const router=require('express').Router();
+const {body}=require('express-validator');
+const ctrl=require('../controllers/salasController');
+const auth=require('../middleware/auth');
+const validar=require('../middleware/validar');
+const reglas=[body('sede_id').isInt({min:1}).withMessage('sede_id invalido'),body('nombre').notEmpty().trim().withMessage('Nombre requerido'),body('capacidad').optional().isInt({min:1}).withMessage('Capacidad invalida'),body('estado').optional().isIn(['disponible','ocupada','mantenimiento']).withMessage('Estado invalido'),body('client_uuid').optional().isUUID().withMessage('client_uuid invalido'),body('base_updated_at').optional().isISO8601().withMessage('base_updated_at invalido')];
+router.get('/',ctrl.listar);
+router.post('/',auth,reglas,validar,ctrl.crear);
+router.put('/:id',auth,reglas,validar,ctrl.actualizar);
+router.delete('/:id',auth,ctrl.eliminar);
+module.exports=router;
